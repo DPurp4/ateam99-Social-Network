@@ -159,8 +159,8 @@ public class Main extends Application {
         ListView<String> leftListView = new ListView<>(list);
         leftListView.setPrefWidth(150);
         leftListView.setPrefHeight(150);
-        list.add("Person 1");
-        list.add("Person 2");
+        list.add("Amy");
+        list.add("Jake");
         list.add("Person 3");
         list.add("Person 4");
         list.add("Person 5");
@@ -193,18 +193,23 @@ public class Main extends Application {
     }
 
     private void setLabelPaneUI(BorderPane mainPane) {
-        GridPane gridPane = new GridPane();
+	GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10, 10, 10, 10));
-        Label status = new Label("Status");
-        Label name = new Label("Name");
-        Label friendList = new Label("Friend List");
-        Label socialNetwork = new Label("Social Network");
-        Label mutualFriend = new Label("Mutual Friends");
-        gridPane.add(status, 0, 0, 2, 2);
-        gridPane.add(name, 0, 2, 2, 2);
-        gridPane.add(friendList, 0, 4, 2, 2);
-        gridPane.add(socialNetwork, 0, 6, 2, 2);
-        gridPane.add(mutualFriend, 0, 8, 2, 2);
+        Label status = new Label("Status: ");
+        Label name = new Label("Name: ");
+        Label friendList = new Label("Friend List: ");
+        Label socialNetwork = new Label("Social Network: ");
+        Label mutualFriend = new Label("Mutual Friends: ");
+        gridPane.add(status, 0, 0, 1, 1);
+        gridPane.add(new Label("	online"), 0, 1, 1, 1);
+        gridPane.add(name, 0, 2, 1, 1);
+        gridPane.add(new Label("	Amy"), 0, 3, 1, 1);
+        gridPane.add(friendList, 0, 4, 1, 1);
+        gridPane.add(new Label("	Jake"), 0, 5, 1, 1);
+        gridPane.add(socialNetwork, 0, 6, 1, 1);
+        gridPane.add(new Label("	Amy, Jake, Person3, Person4, Person5"), 0, 7, 1, 1);
+        gridPane.add(mutualFriend, 0, 8, 1, 1);
+        gridPane.add(new Label("	None"), 0, 9, 1, 1);
         mainPane.setRight(gridPane);
     }
 
