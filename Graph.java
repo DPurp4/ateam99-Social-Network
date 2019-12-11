@@ -66,8 +66,8 @@ public class Graph implements GraphADT {
 
 			for (Person vert : verts)
 				if (vert.name().equals(p.name())) {
-					for (Person neighbor : getNeighbors(p))
-						removeEdge(p, neighbor);
+					for (Person neighbor : getNeighbors(vert))
+						removeEdge(vert, neighbor);
 					verts.remove(vert);// delete Person
 					numVert--;
 					break;
