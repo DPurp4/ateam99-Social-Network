@@ -1,4 +1,11 @@
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 /**
@@ -32,7 +39,7 @@ public class Graph implements GraphADT {
 	 */
 	public boolean addNode(Person p) {
 		try {
-			if (p == null || contains(p))
+			if (p == null || has(p))
 				throw new Exception();
 
 			verts.add(p);// add Person
@@ -54,11 +61,13 @@ public class Graph implements GraphADT {
 	 */
 	public boolean removeNode(Person p) {
 		try {
-			if (p == null || !contains(p))
+			if (p == null || !has(p))
 				throw new Exception();
 
 			for (Person vert : verts)
 				if (vert.name().equals(p.name())) {
+					for (Person neighbor : getNeighbors(p))
+						removeEdge(p, neighbor);
 					verts.remove(vert);// delete Person
 					numVert--;
 					break;
@@ -80,12 +89,12 @@ public class Graph implements GraphADT {
 	 */
 	public boolean addEdge(Person p1, Person p2) {
 		try {
-			if (p1 == null || p2 == null || (!contains(p1) && !contains(p2)))
+			if (p1 == null || p2 == null || (!has(p1) && !has(p2)))
 				throw new Exception();
 
-			if (!contains(p1))
+			if (!has(p1))
 				addNode(p1);
-			if (!contains(p2))
+			if (!has(p2))
 				addNode(p2);
 			boolean edgeExist = false;
 			for (Person v2 : verts)// go through all the Person
@@ -120,7 +129,7 @@ public class Graph implements GraphADT {
 	public boolean removeEdge(Person p1, Person p2) {
 		try {
 			boolean edgeExist = false;
-			if (p1 == null || p2 == null || !contains(p1) || !contains(p2))
+			if (p1 == null || p2 == null || !has(p1) || !has(p2))
 				throw new Exception();
 			for (Person v2 : verts)// go through all the Person
 				if (v2.name().equals(p2.name()))
@@ -191,12 +200,11 @@ public class Graph implements GraphADT {
 	 * Check if a Person is in the list
 	 *
 	 */
-	private boolean contains(Person p) {
+	private boolean has(Person p) {
 		for (Person vert : verts) {
 			if (vert.name().equals(p.name()))// contain
 				return true;
 		}
 		return false;
 	}
-
 }
