@@ -76,9 +76,9 @@ public class SocialNetwork implements SocialNetworkADT {
     LinkedList<Person> bfsList = new LinkedList<Person>();
     Queue<Person> queue = new LinkedList<>();
     Map<String, Person> prev = new HashMap<>();
-    Person p1 = new Person(name1);
-    Person p2 = new Person(name2);
-    Person current = graph.getNode(name1);
+    Person p1 = graph.getNode(name1);
+    Person p2 = graph.getNode(name2);
+    Person current = p1;
 
     queue.add(current);
     current.setVisited(true);
@@ -87,7 +87,7 @@ public class SocialNetwork implements SocialNetworkADT {
 
         current = queue.remove();
 
-        if (current.name().equals(p2)) {
+        if (current.name().equals(name2)) {
             break;
         } else {
             Set<Person> currentFriends = graph.getNeighbors(current);
@@ -101,11 +101,11 @@ public class SocialNetwork implements SocialNetworkADT {
         }
     }
 
-    if (!current.name().equals(p2)) {
+    if (!current.name().equals(name2)) {
         System.out.println("\nThere is no path between " + p1 + " and " + p2);
         return new LinkedList<Person>();
     }
-    for (Person node = graph.getNode(name2); node != null; node = prev.get(node.name())) {
+    for (Person node = p2; node != null; node = prev.get(node.name())) {
         bfsList.add(node);
     }
     Collections.reverse(bfsList);
