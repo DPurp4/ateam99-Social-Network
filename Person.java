@@ -5,6 +5,7 @@ public class Person {
 	private Set<Person> pred = new HashSet<>();// predecessor list
 	private Set<Person> succ = new HashSet<>();// successor list
 	private String name;// name of the Person
+	private boolean visited;
 	
 	public Person(String name) {
 		this.name = name;
@@ -21,4 +22,13 @@ public class Person {
 	public String name() {
 		return this.name;
 	}
+	
+	public void setVisited(boolean visited) {
+        this.visited = visited;
+    }
+	
+	public boolean getVisited() {
+        return visited;
+    }
+	
 }
