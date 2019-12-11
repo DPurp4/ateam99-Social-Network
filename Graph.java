@@ -1,6 +1,4 @@
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -128,7 +126,7 @@ public class Graph implements GraphADT {
 				if (v2.name().equals(p2.name()))
 					for (Person v1 : verts)
 						if (v1.name().equals(p1.name())) {// edge found
-							v2.pred().remove(v1);// update pred()ecessor and succ()essor
+							v2.pred().remove(v1);// update predecessor and successor
 							v1.succ().remove(v2);
 							numEdge--;
 							edgeExist = true;
