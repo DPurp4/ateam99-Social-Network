@@ -102,7 +102,7 @@ public class SocialNetwork implements SocialNetworkADT {
     }
 
     if (!current.name().equals(name2)) {
-        System.out.println("\nThere is no path between " + p1 + " and " + p2);
+        System.out.println("\nThere is no path between " + name1 + " and " + name2);
         return new LinkedList<Person>();
     }
     for (Person node = p2; node != null; node = prev.get(node.name())) {
