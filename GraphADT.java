@@ -27,7 +27,7 @@ import java.util.Set;
 
 /**
  * Filename:   GraphADT.java
- * Project:    ateam
+ * Project:    a3
  * 
  * A simple graph interface
  */
