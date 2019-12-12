@@ -28,11 +28,7 @@ import java.util.Set;
 public class SocialNetwork implements SocialNetworkADT {
   
   private Graph graph;
-
-  public SocialNetwork() {
-    graph = new Graph();
-  }
-
+  
   public Set<Person> getAllPeople() {
     return graph.getAllNodes();
   }
@@ -128,18 +124,27 @@ public class SocialNetwork implements SocialNetworkADT {
 
   @Override
   public Set<Graph> getConnectedComponents() {
-   // Set<Graph> cc = new HashSet<Graph>();
-//    int numVert = graph.getNumVert();
-//    boolean[] visited = new boolean[numVert]; 
-//    for(int v = 0; v < V; ++v) { 
-//        if(!visited[v]) { 
-//            // print all reachable vertices 
-//            // from v 
-//            DFSUtil(v,visited); 
-//            System.out.println(); 
-   // cc.addAll(graph);
-    return null;
-   // return null;
+    
+    Graph temp = new Graph();
+    Set<Graph> cc = new HashSet<Graph>();
+    Set<Person> allPeople = this.getAllPeople();
+    for (Person person : allPeople) {
+      person.setVisited(false);
+    }
+    for (Person person : allPeople) {
+      if (!person.getVisited()) { 
+        person.setVisited(true);
+        temp.addNode(person);
+      Set<Person> oneComponent = getFriends(person.name());
+      for (Person person1: oneComponent) {
+        person1.setVisited(true);
+        temp.addNode(person1);
+      }
+      }
+      cc.add(temp);
+    }
+    
+    return cc;
   }
 
   @Override
@@ -195,9 +200,11 @@ public class SocialNetwork implements SocialNetworkADT {
       Set<Person> allNodes = graph.getAllNodes();
       Iterator<Person> itr = allNodes.iterator();
       while (itr.hasNext()) {
+        if (itr.next().name() != null) {
         String next = itr.next().name();
-        writer.write("a " + next);
+        writer.write("a " + next + "\n");
         writer.flush();
+        }
       }
       
       if (writer != null) {
