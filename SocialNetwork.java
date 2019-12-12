@@ -31,6 +31,10 @@ public class SocialNetwork implements SocialNetworkADT {
   private Graph graph;
   private String centralUser;
   
+  private String getCentralUser() {
+    return centralUser;
+  }
+  
   
   
   public SocialNetwork() {
