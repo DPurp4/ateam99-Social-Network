@@ -44,6 +44,10 @@ import java.util.Set;
  * Implementation of SocialNetworkADT. This class behaves similarly to a graph, with each vertex
  * represented as a person, and each edge represented as a friendship.
  * 
+ * Filename: SocialNetwork.java
+ * Project: ateam3
+ * Authors:
+ * 
  * @author Devin DuBeau
  * @author Mihir Arora 
  * @author Xiaoyuan Liu
@@ -292,12 +296,9 @@ public class SocialNetwork implements SocialNetworkADT {
   @Override
   public void saveToFile(File file) {
       try {
-
         PrintWriter writer = new PrintWriter(file);
-
         for (Person p : graph.getAllNodes())
           p.setVisited(false);
-
         for (Person p : graph.getAllNodes()) {
           writer.write("a " + p.name() + "\n");
           for (Person n : graph.getNeighbors(p))
@@ -305,11 +306,9 @@ public class SocialNetwork implements SocialNetworkADT {
               writer.write("a " + p.name() + " " + n.name() + "\n");
           p.setVisited(true);
         }
-
         writer.flush();
         if (writer != null)
           writer.close();
-
       } catch (FileNotFoundException e) {
         e.printStackTrace();
       }
