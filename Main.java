@@ -3,6 +3,7 @@ package application;
 
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -254,16 +255,31 @@ public class Main extends Application {
 
         Button exit = new Button("Exit");
         bottomBox.getChildren().add(exit);
-        Alert alert = new Alert(Alert.AlertType.NONE);
+        ButtonType exitButton = new ButtonType("Exit", ButtonBar.ButtonData.OK_DONE);
+        ButtonType saveButton = new ButtonType("Save and Exit", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.NONE,"Are you sure you want to exit? All unsaved data will be gone.", exitButton, saveButton);
 
         exit.setOnAction(e -> {
             alert.setAlertType(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Are you sure you want to exit, all unsaved data will be gone.");
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK)
+            if (result.get() == exitButton)
                 primaryStage.close();
-            else
-                alert.close();
+            else {
+                if (peopleList.size() == 0) {
+                    primaryStage.close();
+                    return;
+                }
+                DirectoryChooser exportDirectoryChooser = new DirectoryChooser();
+                File exportTemp = exportDirectoryChooser.showDialog(primaryStage);
+                if (exportTemp != null) {
+                    File exportFile = new File(exportTemp.getAbsolutePath() + "/export.txt");
+                    socialNetwork.saveToFile(exportFile);
+                    primaryStage.close();
+                }
+                else {
+                    displayAlertBox("Please select a directory", null);
+                }
+            }
         });
     }
 
@@ -313,8 +329,6 @@ public class Main extends Application {
             else
                 componentInfo = "There are " + componentSize + " components in the network\n";
 
-
-
             networkInfoTextArea.setText(peopleSizeInfo + componentInfo);
 
             statusTextArea.setText("This user has " + friendList.size() + friend_s);
@@ -336,7 +350,6 @@ public class Main extends Application {
         componentsInNetworkButton.setOnAction(e -> {
 
             Set<Graph> components = socialNetwork.getConnectedComponents();
-
 
             int heightFactor = components.size();
             LinkedList<Node> nodes = new LinkedList<>();
@@ -594,6 +607,7 @@ public class Main extends Application {
                     return;
                 }
                 socialNetwork.removeUser(personName);
+                peopleList.remove(personName);
                 reloadPeopleList();
                 removePersonStage.close();
             });
@@ -652,7 +666,7 @@ public class Main extends Application {
                 socialNetwork.saveToFile(exportFile);
             }
             else
-                displayAlertBox("Something is wrong with your system", null);
+                displayAlertBox("Please select a directory", null);
         });
     }
 
@@ -691,7 +705,7 @@ public class Main extends Application {
                 else
                     displayAlertBox("Error, unable to load this file", null);
             } else {
-                displayAlertBox("Error: something is wrong with the file", null);
+                displayAlertBox("Please select a file", null);
             }
         });
     }
@@ -704,7 +718,6 @@ public class Main extends Application {
     }
 
     private void reloadPeopleList() {
-        peopleList.add();
         for (Person person : socialNetwork.getAllPeople()) {
             if (!peopleList.contains(person.name()))
                 peopleList.add(person.name());
