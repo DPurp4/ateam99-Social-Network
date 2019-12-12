@@ -1,9 +1,32 @@
-
+///////////////////////////////////////////////////////////////////////////////
+//                  ALL STUDENTS COMPLETE THESE SECTIONS
+// Title:           Social Network Visualizer Program
+// Files:           Graph.java, GraphADT.java, Main.java, Person.java,
+//                  SociaNetwork.java, SocialNetworkADT.java
+// Semester:        Autumn 2019
+//
+// ATeam members:   Devin DuBeau, LEC 002, ddubeau@wisc.edu, dubeau
+//                  Mihir Arora, LEC 001, mrarora@wisc.edu, marora
+//                  Xiaoyuan Liu, LEC 001, xliu798@wisc.edu, xiaoyuanl
+//                  Yuehan Qin, LEC 001, yqin43@wisc.edu, yuehan
+//                  Reid Chen, LEC 001, ychen878@wisc.edu, reid
+//
+//////////////////// STUDENTS WHO GET HELP FROM OTHER THAN THEIR PARTNER //////
+//                   must fully acknowledge and credit those sources of help.
+//                   Instructors and TAs do not have to be credited here,
+//                   but tutors, roommates, relatives, strangers, etc do.
+//
+// Persons:          Identify persons by name, relationship to you, and email.
+//                   Describe in detail the the ideas and help they provided.
+//
+// Online sources:   avoid web searches to solve your problems, but if you do
+//                   search, be sure to include Web URLs and description of
+//                   of any information you find.
+//////////////////////////// 80 columns wide //////////////////////////////////
 package application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,14 +41,15 @@ import java.util.Scanner;
 import java.util.Set;
 
 /**
- * 
- */
-
-/**
- * Implementation of SocialNetworkADT
+ * Implementation of SocialNetworkADT. This class behaves similarly to a graph, with each vertex
+ * represented as a person, and each edge represented as a friendship.
  * 
  * @author Devin DuBeau
- *
+ * @author Mihir Arora 
+ * @author Xiaoyuan Liu
+ * @author Yuehan Qin
+ * @author Reid Chen
+ * 
  */
 public class SocialNetwork implements SocialNetworkADT {
 
@@ -241,7 +265,7 @@ public class SocialNetwork implements SocialNetworkADT {
             this.removeFriends(wordList[1], wordList[2]);
         } else if (wordList[0].equals("s")) {
           setCentralUser(wordList[1]);
-        }
+        } 
       }
     } catch (FileNotFoundException e) {
       e.printStackTrace();
@@ -267,28 +291,29 @@ public class SocialNetwork implements SocialNetworkADT {
    */
   @Override
   public void saveToFile(File file) {
-    try {
+      try {
 
-      PrintWriter writer = new PrintWriter(file);
-      Set<Person> allNodes = graph.getAllNodes();
-      Iterator<Person> itr = allNodes.iterator();
-      while (itr.hasNext()) {
-        if (itr.next().name() != null) {
-          String next = itr.next().name();
-          writer.write("a " + next + "\n");
-          writer.flush();
+        PrintWriter writer = new PrintWriter(file);
+
+        for (Person p : graph.getAllNodes())
+          p.setVisited(false);
+
+        for (Person p : graph.getAllNodes()) {
+          writer.write("a " + p.name() + "\n");
+          for (Person n : graph.getNeighbors(p))
+            if (!n.getVisited())
+              writer.write("a " + p.name() + " " + n.name() + "\n");
+          p.setVisited(true);
         }
+
+        writer.flush();
+        if (writer != null)
+          writer.close();
+
+      } catch (FileNotFoundException e) {
+        e.printStackTrace();
       }
 
-      if (writer != null) {
-        writer.close();
-      }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     }
 
-  }
-
 }
-
-
