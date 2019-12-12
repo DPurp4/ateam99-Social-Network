@@ -29,6 +29,10 @@ public class SocialNetwork implements SocialNetworkADT {
   
   private Graph graph;
 
+  public SocialNetwork() {
+    graph = new Graph();
+  }
+
   public Set<Person> getAllPeople() {
     return graph.getAllNodes();
   }
