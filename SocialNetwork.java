@@ -29,6 +29,10 @@ public class SocialNetwork implements SocialNetworkADT {
   
   private Graph graph;
 
+  public Set<Person> getAllPeople() {
+    return graph.getAllNodes();
+  }
+
   @Override
   public boolean addFriends(String name1, String name2) {
     Person person1 = new Person(name1);
