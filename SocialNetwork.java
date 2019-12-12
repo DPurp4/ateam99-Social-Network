@@ -29,6 +29,9 @@ import java.util.Set;
 public class SocialNetwork implements SocialNetworkADT {
 
   private Graph graph;
+  private String centralUser;
+  
+  
   
   public SocialNetwork() {
     graph = new Graph();
@@ -110,10 +113,8 @@ public class SocialNetwork implements SocialNetworkADT {
         }
       }
     }
-
     if (!current.name().equals(name2)) {
-      System.out.println("\nThere is no path between " + name1 + " and " + name2);
-      return new LinkedList<Person>();
+      return null;
     }
     for (Person node = p2; node != null; node = prev.get(node.name())) {
       bfsList.add(node);
@@ -201,12 +202,7 @@ public class SocialNetwork implements SocialNetworkADT {
 
 
   private void setCentralUser(String name) {
-    Set<Person> allUsers = graph.getAllNodes();
-    Iterator<Person> itr = allUsers.iterator();
-    while (itr.hasNext()) {
-      String next = itr.next().name();
-      addFriends(name, next);
-    }
+    this.centralUser = name;
 
   }
 
@@ -236,32 +232,7 @@ public class SocialNetwork implements SocialNetworkADT {
   }
   
   public static void main(String[] args) {
-    SocialNetwork network = new SocialNetwork();
-    network.addUser("p1");
-    network.addUser("p2");
-    network.addUser("p3");
-    network.addUser("p4");
-    network.addUser("p5");
-    network.addUser("p6");
-    network.addFriends("p1", "p2");
-    network.addFriends("p2", "p3");
-    network.addFriends("p4", "p5");
-    network.addFriends("p2", "p7");
-    network.addFriends("p7", "p3");
-    Set<Graph> cc = network.getConnectedComponents();
-    System.out.println(cc.size());
-    for (Graph graph: cc) {
-      for (Person person: graph.getAllNodes()) {
-        System.out.print(person.name() + " ");
-        
-      }
-      System.out.println("");
-//     // System.out.print
-    }
-    
-   // System.out.println(cc);
-    
-    
+ 
   }
   
 }
