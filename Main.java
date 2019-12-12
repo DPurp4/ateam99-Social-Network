@@ -1,9 +1,31 @@
+///////////////////////////////////////////////////////////////////////////////////////////////////
+//                  ALL STUDENTS COMPLETE THESE SECTIONS
+// Title:           Social Network Visualizer Program
+// Files:           Graph.java, GraphADT.java, Main.java, Person.java,
+//             SociaNetwork.java, SocialNetworkADT.java
+// Semester:        Autumn 2019
+//
+// ATeam members:  Devin DuBeau, LEC 002, ddubeau@wisc.edu, dubeau
+//                 Mihir Arora, LEC 001, mrarora@wisc.edu, marora
+//                 Xiaoyuan Liu, LEC 001, xliu798@wisc.edu, xiaoyuanl
+//                 Yuehan Qin, LEC 001, yqin43@wisc.edu, yuehan
+//                 Reid Chen, LEC 001, ychen878@wisc.edu, reid
+//
+//////////////////// STUDENTS WHO GET HELP FROM OTHER THAN THEIR PARTNER //////////////////////////
+//                   must fully acknowledge and credit those sources of help.
+//                   Instructors and TAs do not have to be credited here,
+//                   but tutors, roommates, relatives, strangers, etc do.
+//
+// Persons:          Identify persons by name, relationship to you, and email.
+//                   Describe in detail the the ideas and help they provided.
+//
+// Online sources:   avoid web searches to solve your problems, but if you do
+//                   search, be sure to include Web URLs and description of
+//                   of any information you find.
+//////////////////////////// 100 columns wide /////////////////////////////////////////////////////
 package application;
 
-
-
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -25,12 +47,14 @@ import java.util.*;
 
 public class Main extends Application {
 
+    // some useful constants
     private static final int WINDOW_WIDTH = 750;
     private static final int WINDOW_HEIGHT = 500;
     private static final String APP_TITLE = "Social Network Visualizer";
     private static final String USER_PROFILE_TXT = "./user_profile.txt";
     private static final String N_A = "N/A";
 
+    // panes
     private BorderPane welcomePane = new BorderPane();
     private BorderPane mainPane = new BorderPane();
     private Button loginButton = new Button("Log In");
@@ -38,12 +62,15 @@ public class Main extends Application {
     private TextField usernameTextField = new TextField();
     private PasswordField passwordTextField = new PasswordField();
 
+    // scenes and alert
     private Scene mainScene = new Scene(mainPane, 1200, 1000);
     private Scene welcomeScene = new Scene(welcomePane, WINDOW_WIDTH, WINDOW_HEIGHT);
     private Stage simpleAlert = new Stage();
 
+    // user profile to login and signup to the system
     private Hashtable<String, String> userProfiles = new Hashtable<>();
 
+    // all buttons
     private Button addPersonButton = new Button("Add Person");
     private Button removePersonButton = new Button("Remove Person");
     private Button clearNetworkButton = new Button("Clear Network");
@@ -55,7 +82,7 @@ public class Main extends Application {
     private Button findMutualFriendButton = new Button("Find Mutual Friend");
     private Button findShortestPathFriendButton = new Button("Shortest Path");
 
-
+    // array to manage buttons
     private Button[] mainButtons = {
             addPersonButton,
             removePersonButton,
@@ -69,24 +96,35 @@ public class Main extends Application {
             componentsInNetworkButton
     };
 
+    // network information
     private boolean isNetworkLoaded = false;
     private SocialNetwork socialNetwork = new SocialNetwork();
 
+    // list to store people
     private ObservableList<String> peopleList = FXCollections.observableArrayList();
     private ListView<String> leftListView = new ListView<>(peopleList);
 
+    // text area and label to display information
     private TextArea statusTextArea = new TextArea(N_A);
     private Label nameLabel = new Label(N_A);
     private TextArea friendListTextArea = new TextArea(N_A);
     private TextArea networkInfoTextArea = new TextArea(N_A);
 
+    /**
+     * to setup welcome gui and button actions
+     * @param primaryStage
+     */
     private void setupWelcomeBorderPane(Stage primaryStage) {
+        // setup welcome UI
         setupWelcomeUI();
         // setup button handler
         handleLogin(primaryStage);
         handleSignUp(primaryStage);
     }
 
+    /**
+     * to setup welcome UI
+     */
     private void setupWelcomeUI() {
         // setup welcome label
         Label welcomeLabel = new Label("Welcome to Social Network Visualizer!");
@@ -135,6 +173,10 @@ public class Main extends Application {
         welcomePane.setBottom(bottomBox);
     }
 
+    /**
+     * to setup main pane by regions
+     * @param primaryStage
+     */
     private void setupMainBorderPane(Stage primaryStage) {
         setLeftPaneUI(mainPane);
         setupMainLabels(mainPane);
@@ -142,10 +184,12 @@ public class Main extends Application {
         setBottomPaneUI(mainPane, primaryStage);
     }
 
+    /**
+     * setup user profile for login and singup, user here is not related to network
+     */
     private void setupUserProfile() {
         File userProfile = new File(USER_PROFILE_TXT);
         try {
-            boolean ignored = userProfile.createNewFile();
             Scanner profileScanner = new Scanner(userProfile);
             // load all user profiles
             while (profileScanner.hasNextLine()) {
@@ -157,10 +201,14 @@ public class Main extends Application {
             }
 
         } catch (IOException e) {
-            displayAlertBox("Error: Unable to load user_profile.txt" + e.getLocalizedMessage(), null);
+            displayAlertBox("Error: Unable to load user_profile.txt" +
+                    e.getLocalizedMessage(), null);
         }
     }
 
+    /**
+     * initialize some default value for the program
+     */
     private void initialize() {
         simpleAlert.setTitle("Alert");
         simpleAlert.initModality(Modality.APPLICATION_MODAL);
@@ -168,6 +216,10 @@ public class Main extends Application {
         simpleAlert.setMinHeight(128);
     }
 
+    /**
+     * start of the program
+     * @param primaryStage
+     */
     @Override
     public void start(Stage primaryStage) {
         initialize();
@@ -182,29 +234,38 @@ public class Main extends Application {
         primaryStage.show();
     }
 
+    /**
+     * handle sign up action
+     * @param primaryStage
+     */
     private void handleSignUp(Stage primaryStage) {
         signUpButton.setOnAction(e -> {
             String username = usernameTextField.getText();
             String password = passwordTextField.getText();
 
+            // check if empty
             if (username.isEmpty() || password.isEmpty()) {
-                displayAlertBox("Both username and password should not be empty", null);
+                displayAlertBox("Both username and " +
+                        "password should not be empty", null);
                 return;
             }
-
+            // check password length
             if (password.length() < 5 || username.length() < 5) {
-                displayAlertBox("Both username and password should has more than 4 characters", null);
+                displayAlertBox("Both username and password should " +
+                        "has more than 4 characters", null);
                 return;
             }
-
+            // check existence of username
             if (userProfiles.containsKey(username)) {
                 displayAlertBox("Username has already been used", null);
                 return;
             }
 
+            // load profile
             File userProfile = new File(USER_PROFILE_TXT);
 
             try {
+                // write new user info
                 FileWriter fileWriter = new FileWriter(userProfile);
                 PrintWriter printWriter = new PrintWriter(fileWriter);
                 printWriter.println(username + ":" + password);
@@ -215,27 +276,35 @@ public class Main extends Application {
                     simpleAlert.close();
                 });
             } catch (IOException err) {
-                displayAlertBox("Error: Unable to load user_profile.txt" + err.getLocalizedMessage(), null);
+                displayAlertBox("Error: Unable to load" +
+                        "user_profile.txt" + err.getLocalizedMessage(), null);
             }
 
         });
     }
 
+    /**
+     * handle login action
+     * @param primaryStage
+     */
     private void handleLogin(Stage primaryStage) {
         loginButton.setOnAction(e -> {
             String username = usernameTextField.getText();
             String password = passwordTextField.getText();
 
+            // check empty
             if (username.isEmpty() || password.isEmpty()) {
-                displayAlertBox("Both username and password should not be empty", null);
+                displayAlertBox("Both username and" +
+                        "password should not be empty", null);
                 return;
             }
-
+            // check existence of username
             if (!userProfiles.containsKey(username)) {
-                displayAlertBox("This user is the user profile, please sign up", null);
+                displayAlertBox("This user is the" +
+                        "user profile, please sign up", null);
                 return;
             }
-
+            // check if password is correct
             if (userProfiles.get(username).equals(password)) {
                 displayAlertBox("Log in succeed", event -> {
                     primaryStage.setScene(mainScene);
@@ -248,17 +317,24 @@ public class Main extends Application {
     }
 
 
+    /**
+     * setup bottom pane
+     * @param mainPane
+     * @param primaryStage
+     */
     private void setBottomPaneUI(BorderPane mainPane, Stage primaryStage) {
         HBox bottomBox = new HBox();
         bottomBox.setPadding(new Insets(10, 10, 10 ,10));
         mainPane.setBottom(bottomBox);
-
+        // setup exit button
         Button exit = new Button("Exit");
         bottomBox.getChildren().add(exit);
         ButtonType exitButton = new ButtonType("Exit", ButtonBar.ButtonData.OK_DONE);
-        ButtonType saveButton = new ButtonType("Save and Exit", ButtonBar.ButtonData.CANCEL_CLOSE);
-        Alert alert = new Alert(Alert.AlertType.NONE,"Are you sure you want to exit? All unsaved data will be gone.", exitButton, saveButton);
-
+        ButtonType saveButton = new ButtonType("Save and Exit",
+                ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alert = new Alert(Alert.AlertType.NONE,"Are you sure you want to exit?" +
+                "All unsaved data will be gone.", exitButton, saveButton);
+        // setup button action
         exit.setOnAction(e -> {
             alert.setAlertType(Alert.AlertType.CONFIRMATION);
             Optional<ButtonType> result = alert.showAndWait();
@@ -272,7 +348,8 @@ public class Main extends Application {
                 DirectoryChooser exportDirectoryChooser = new DirectoryChooser();
                 File exportTemp = exportDirectoryChooser.showDialog(primaryStage);
                 if (exportTemp != null) {
-                    File exportFile = new File(exportTemp.getAbsolutePath() + "/export.txt");
+                    File exportFile = new File(exportTemp.getAbsolutePath() +
+                            "/export.txt");
                     socialNetwork.saveToFile(exportFile);
                     primaryStage.close();
                 }
@@ -283,6 +360,10 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * setup left pane
+     * @param mainPane
+     */
     private void setLeftPaneUI(BorderPane mainPane) {
         handleListSelection(leftListView);
         leftListView.setPrefWidth(150);
@@ -290,6 +371,10 @@ public class Main extends Application {
         mainPane.setLeft(leftListView);
     }
 
+    /**
+     * handle list selectionaction
+     * @param leftListView
+     */
     private void handleListSelection(ListView<String> leftListView) {
         leftListView.getSelectionModel().selectedItemProperty().addListener(e -> {
             String selectedPersonName = leftListView.getSelectionModel().getSelectedItem();
@@ -299,6 +384,10 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * update central user information
+     * @param selectedPersonName
+     */
     private void updateCentralUserInfo(String selectedPersonName) {
         LinkedList<String> friendList = new LinkedList<>();
         if (socialNetwork.getFriends(selectedPersonName) == null) {
@@ -308,13 +397,14 @@ public class Main extends Application {
 
             for (Person person : socialNetwork.getFriends(selectedPersonName))
                 friendList.add(person.name());
-
+            // update friends number
             String friend_s = "";
             if (friendList.size() == 1)
                 friend_s = " friend.";
             else
                 friend_s = " friends.";
 
+            // update people size
             int peopleSize = socialNetwork.getAllPeople().size();
             String peopleSizeInfo;
             if (peopleSize == 1)
@@ -322,6 +412,7 @@ public class Main extends Application {
             else
                 peopleSizeInfo = "There are " + peopleSize + " people in the network\n";
 
+            // update component size
             int componentSize = socialNetwork.getConnectedComponents().size();
             String componentInfo;
             if (componentSize == 1)
@@ -332,7 +423,8 @@ public class Main extends Application {
             networkInfoTextArea.setText(peopleSizeInfo + componentInfo);
 
             statusTextArea.setText("This user has " + friendList.size() + friend_s);
-            friendListTextArea.setText(friendList.toString().replace("[", "").replace("]", ""));
+            friendListTextArea.setText(friendList.toString().replace("[", "").
+                    replace("]", ""));
         }
     }
 
@@ -347,10 +439,17 @@ public class Main extends Application {
         handleRemoveFriends();
         handleFindMutualFriends();
         handleFindShortestPathFriend();
+        handleComponentsInNetwork();
+    }
+
+    /**
+     * handle components in network action
+     */
+    private void handleComponentsInNetwork() {
         componentsInNetworkButton.setOnAction(e -> {
 
             Set<Graph> components = socialNetwork.getConnectedComponents();
-
+            // calculate height
             int heightFactor = components.size();
             LinkedList<Node> nodes = new LinkedList<>();
             for (Graph component : components) {
@@ -359,7 +458,8 @@ public class Main extends Application {
                 for (Person person : component.getAllNodes()) {
                     componentItem.add(person.name());
                 }
-                nodes.add(new Label(componentItem.toString().replace("]", "").replace("[", "")));
+                nodes.add(new Label(componentItem.toString().replace("]", "")
+                        .replace("[", "")));
             }
 
             Stage showComponentsStage = new Stage();
@@ -377,6 +477,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle find shortest path
+     */
     private void handleFindShortestPathFriend() {
         findShortestPathFriendButton.setOnAction(e -> {
             if (leftListView.getSelectionModel().getSelectedItem() == null) {
@@ -396,6 +499,7 @@ public class Main extends Application {
 
             findButton.setOnAction(event -> {
                 String personName = personNameTextField.getText();
+                // check alot of things
                 if (personName.isEmpty()) {
                     displayAlertBox("Person name should not be empty", null);
                     return;
@@ -421,7 +525,9 @@ public class Main extends Application {
                 for (Person person : shortest)
                     shortestPathList.add(person.name());
 
-                String info = "Shortest connection with " + personName + " is: " + shortestPathList.toString().replace("]", "").replace("[", "");
+                String info = "Shortest connection with " + personName + " is: " +
+                        shortestPathList.toString().replace("]", "").
+                                replace("[", "");
                 displayAlertBox(info, null);
                 reloadPeopleList();
                 shortestPathStage.close();
@@ -436,6 +542,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle find mutual friends
+     */
     private void handleFindMutualFriends() {
         findMutualFriendButton.setOnAction(e -> {
             if (leftListView.getSelectionModel().getSelectedItem() == null) {
@@ -453,6 +562,7 @@ public class Main extends Application {
             personNameTextField.setPromptText("Enter person name");
             Button findButton = new Button("Find");
 
+            // check multiple things
             findButton.setOnAction(event -> {
                 String personName = personNameTextField.getText();
                 if (personName.isEmpty()) {
@@ -463,7 +573,8 @@ public class Main extends Application {
                     displayAlertBox("This person does not exist", null);
                     return;
                 }
-                Set<Person> mutualFriends = socialNetwork.getMutualFriends(selectedPersonName, personName);
+                Set<Person> mutualFriends = socialNetwork.getMutualFriends(selectedPersonName,
+                        personName);
                 LinkedList<String> mutualFriendNames = new LinkedList<>();
                 for (Person friend : mutualFriends) {
                     mutualFriendNames.add(friend.name());
@@ -482,7 +593,9 @@ public class Main extends Application {
                 else
                     friend_is_are = "friends are";
 
-                String info = "Mutual " + friend_is_are + ": " + mutualFriendNames.toString().replace("]", "").replace("[", "");
+                String info = "Mutual " + friend_is_are + ": " +
+                        mutualFriendNames.toString().replace("]",
+                                "").replace("[", "");
                 displayAlertBox(info, null);
                 findMutualFriendStage.close();
             });
@@ -496,6 +609,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle remove friends
+     */
     private void handleRemoveFriends() {
         removeFriendButton.setOnAction(e -> {
             if (leftListView.getSelectionModel().getSelectedItem() == null) {
@@ -547,6 +663,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle add friend
+     */
     private void handleAddFriend() {
         addFriendButton.setOnAction(e -> {
             if (leftListView.getSelectionModel().getSelectedItem() == null) {
@@ -588,6 +707,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle remove person
+     */
     private void handleRemovePerson() {
         removePersonButton.setOnAction(e -> {
             Stage removePersonStage = new Stage();
@@ -621,6 +743,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle add person
+     */
     private void handleAddPerson() {
         addPersonButton.setOnAction(e -> {
             Stage addPersonStage = new Stage();
@@ -636,7 +761,8 @@ public class Main extends Application {
             addButton.setOnAction(event -> {
                 String personName = personNameTextField.getText();
                 if (personName.contains(" ") || personNameTextField.getText().contains("\"")) {
-                    displayAlertBox("Person name should not contains space or quotation mark", null);
+                    displayAlertBox("Person name should not contains space or" +
+                            "quotation mark", null);
                     return;
                 }
                 if (personName.isEmpty()) {
@@ -657,6 +783,10 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * handle export network
+     * @param primaryStage stage of the program
+     */
     private void handleExportNetwork(Stage primaryStage) {
         exportNetworkButton.setOnAction(e -> {
             DirectoryChooser exportDirectoryChooser = new DirectoryChooser();
@@ -670,6 +800,9 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * clear everything in the network
+     */
     private void handleClearNetwork() {
         clearNetworkButton.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.NONE);
@@ -677,7 +810,6 @@ public class Main extends Application {
             alert.setContentText("Are you sure you want to clear network, everything will be gone");
             Optional<ButtonType> result = alert.showAndWait();
             if (result.get() == ButtonType.OK) {
-                // TODO: more things needed to be cleaned
                 socialNetwork = new SocialNetwork();
                 peopleList.clear();
                 for (Button button : mainButtons)
@@ -691,6 +823,10 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * load things into network
+     * @param primaryStage program's stage
+     */
     private void handleLoadNetwork(Stage primaryStage) {
         loadNetworkButton.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
@@ -710,13 +846,20 @@ public class Main extends Application {
         });
     }
 
+    /**
+     * load file
+     * @param file input file
+     * @return true if success
+     */
     private boolean loadFile(File file) {
         socialNetwork.loadFromFile(file);
-        // TODO, need to check if the file is valid
         reloadPeopleList();
         return true;
     }
 
+    /**
+     * reload data
+     */
     private void reloadPeopleList() {
         for (Person person : socialNetwork.getAllPeople()) {
             if (!peopleList.contains(person.name()))
@@ -726,6 +869,10 @@ public class Main extends Application {
         updateCentralUserInfo(socialNetwork.getCentralUser());
     }
 
+    /**
+     * setup main buttons GUI
+     * @param mainPane
+     */
     private void setupMainButtonsUI(BorderPane mainPane) {
         Label networkLabel = new Label("Network Operations");
         HBox networkBox = new HBox();
@@ -753,6 +900,10 @@ public class Main extends Application {
                 button.setDisable(!button.getText().equals("Load Network"));
     }
 
+    /**
+     * setup labels
+     * @param mainPane pane to display this section
+     */
     private void setupMainLabels(BorderPane mainPane) {
         VBox rightBox = new VBox();
 
@@ -801,7 +952,11 @@ public class Main extends Application {
         launch(args);
     }
 
-    // This method creates a pop-up window that displays alerts
+    /**
+     * This method creates a pop-up window that displays alerts
+     * @param message alert message
+     * @param event alert event
+     */
     private void displayAlertBox(String message, EventHandler<ActionEvent> event){
         Label label = new Label(message);
 
