@@ -4,9 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Filename: Graph.java 
+ * Filename: Graph.java
  * Project: ateam3
- * Authors: 
+ * Authors:
  * 
  * Directed and unweighted graph implementation
  */
@@ -24,10 +24,8 @@ public class Graph implements GraphADT {
 	/**
 	 * Add new Person to the graph.
 	 *
-	 * If Person is null or already exists, method ends returning false.
-	 * 
-	 * Valid argument conditions: 1. Person is non-null 2. Person is not already in
-	 * the graph
+	 * @param p person
+	 * @return false if Person is null or already exists, true otherwise
 	 */
 	public boolean addNode(Person p) {
 		if (p == null || has(p))
@@ -38,13 +36,10 @@ public class Graph implements GraphADT {
 	}
 
 	/**
-	 * Remove a Person and all associated edges from the graph.
+	 * Remove a Person and all associated edges from the graph
 	 * 
-	 * If Person is null or does not exist, method ends without removing a Person,
-	 * edges and returning false.
-	 * 
-	 * Valid argument conditions: 1. Person is non-null 2. Person is not already in
-	 * the graph
+	 * @param p person
+	 * @return false if Person is null or does not exist, true otherwise
 	 */
 	public boolean removeNode(Person p) {
 		if (p == null || !has(p))
@@ -61,11 +56,13 @@ public class Graph implements GraphADT {
 	}
 
 	/**
-	 * Add the edge from p1 to p2 to this graph. (edge is undirected and unweighted)
-	 * If either Person does not exist, add Person, and add edge. 
+	 * Add the edge from p1 to p2 to this graph If either Person does not exist, add
+	 * Person, and add edge.
 	 * 
-	 * Valid argument conditions: 1. neither Person is null 2. both vertices are in
-	 * the graph 3. the edge is not in the graph
+	 * @param p1 person1
+	 * @param p2 person2
+	 * @return false if either Person is null, or if an edge from p1 to p2 already
+	 *         exists, true if add is successful
 	 */
 	public boolean addEdge(Person p1, Person p2) {
 		if (p1 == null || p2 == null)
@@ -86,7 +83,7 @@ public class Graph implements GraphADT {
 						if (edgeExist)
 							return false;
 
-						v2.neighbors().add(v1);// update predecessor and successor
+						v2.neighbors().add(v1);// update neighbors
 						v1.neighbors().add(v2);
 						break;
 					}
@@ -94,12 +91,12 @@ public class Graph implements GraphADT {
 	}
 
 	/**
-	 * Remove the edge from p1 to p2 from this graph. (edge is undirected and
-	 * unweighted) If either Person does not exist, or if an edge from p1 to p2 does
-	 * not exist, no edge is removed.
+	 * Remove the edge from p1 to p2 from this graph
 	 * 
-	 * Valid argument conditions: 1. neither Person is null 2. both vertices are in
-	 * the graph 3. the edge from p1 to p2 is in the graph
+	 * @param p1 person1
+	 * @param p2 person2
+	 * @return false if either Person is null, or if an edge from p1 to p2 does not
+	 *         exist, true if remove is successful
 	 */
 	public boolean removeEdge(Person p1, Person p2) {
 		boolean edgeExist = false;
@@ -109,7 +106,7 @@ public class Graph implements GraphADT {
 			if (v2.name().equals(p2.name()))
 				for (Person v1 : verts)
 					if (v1.name().equals(p1.name())) {// edge found
-						v2.neighbors().remove(v1);// update predecessor and successor
+						v2.neighbors().remove(v1);// update neighbors
 						v1.neighbors().remove(v2);
 						edgeExist = true;
 						break;
@@ -123,6 +120,7 @@ public class Graph implements GraphADT {
 	/**
 	 * Returns a Set that contains all the people
 	 * 
+	 * @return a set containing all the people
 	 */
 	public Set<Person> getAllNodes() {
 		return verts;
@@ -131,6 +129,8 @@ public class Graph implements GraphADT {
 	/**
 	 * Get all the neighbors of a Person
 	 *
+	 * @param p person
+	 * @return a set containing all the neighbors of a person
 	 */
 	public Set<Person> getNeighbors(Person p) {
 		return getNode(p.name()).neighbors();
@@ -139,6 +139,8 @@ public class Graph implements GraphADT {
 	/**
 	 * Return a person given its name
 	 *
+	 * @param name the name of the person
+	 * @return the person corresponds to the given name
 	 */
 	public Person getNode(String name) {
 		for (Person vert : verts) {
@@ -151,6 +153,8 @@ public class Graph implements GraphADT {
 	/**
 	 * Check if a person is in the list
 	 *
+	 * @param p person
+	 * @return true if the person exists, false otherwise
 	 */
 	private boolean has(Person p) {
 		for (Person vert : verts) {
