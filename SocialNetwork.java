@@ -1,4 +1,5 @@
 package application;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -26,9 +27,14 @@ import java.util.Set;
  *
  */
 public class SocialNetwork implements SocialNetworkADT {
-  
+
   private Graph graph;
   
+  public SocialNetwork() {
+    graph = new Graph();
+    
+  }
+
   public Set<Person> getAllPeople() {
     return graph.getAllNodes();
   }
@@ -38,7 +44,7 @@ public class SocialNetwork implements SocialNetworkADT {
     Person person1 = new Person(name1);
     Person person2 = new Person(name2);
     return this.graph.addEdge(person1, person2);
-    
+
   }
 
   @Override
@@ -89,42 +95,40 @@ public class SocialNetwork implements SocialNetworkADT {
 
     while (!queue.isEmpty()) {
 
-        current = queue.remove();
+      current = queue.remove();
 
-        if (current.name().equals(name2)) {
-            break;
-        } else {
-            Set<Person> currentFriends = graph.getNeighbors(current);
-            for (Person currentFriend : currentFriends) {
-                if (!currentFriend.getVisited()) {
-                    queue.add(currentFriend);
-                    currentFriend.setVisited(true);
-                    prev.put(currentFriend.name(), current);
-                }
-            }
+      if (current.name().equals(name2)) {
+        break;
+      } else {
+        Set<Person> currentFriends = graph.getNeighbors(current);
+        for (Person currentFriend : currentFriends) {
+          if (!currentFriend.getVisited()) {
+            queue.add(currentFriend);
+            currentFriend.setVisited(true);
+            prev.put(currentFriend.name(), current);
+          }
         }
+      }
     }
 
     if (!current.name().equals(name2)) {
-        System.out.println("\nThere is no path between " + name1 + " and " + name2);
-        return new LinkedList<Person>();
+      System.out.println("\nThere is no path between " + name1 + " and " + name2);
+      return new LinkedList<Person>();
     }
     for (Person node = p2; node != null; node = prev.get(node.name())) {
-        bfsList.add(node);
+      bfsList.add(node);
     }
     Collections.reverse(bfsList);
 
     return bfsList;
 
-}
+  }
 
-    
-    
 
 
   @Override
   public Set<Graph> getConnectedComponents() {
-    
+
     Graph temp = new Graph();
     Set<Graph> cc = new HashSet<Graph>();
     Set<Person> allPeople = this.getAllPeople();
@@ -132,18 +136,18 @@ public class SocialNetwork implements SocialNetworkADT {
       person.setVisited(false);
     }
     for (Person person : allPeople) {
-      if (!person.getVisited()) { 
+      if (!person.getVisited()) {
         person.setVisited(true);
         temp.addNode(person);
-      Set<Person> oneComponent = getFriends(person.name());
-      for (Person person1: oneComponent) {
-        person1.setVisited(true);
-        temp.addNode(person1);
-      }
+        Set<Person> oneComponent = getFriends(person.name());
+        for (Person person1 : oneComponent) {
+          person1.setVisited(true);
+          temp.addNode(person1);
+        }
       }
       cc.add(temp);
     }
-    
+
     return cc;
   }
 
@@ -151,37 +155,37 @@ public class SocialNetwork implements SocialNetworkADT {
   public void loadFromFile(File file) {
     Scanner scnr = null;
     try {
-        scnr = new Scanner(file);
-        while (scnr.hasNextLine()) {
-            String line = scnr.nextLine();
-            String[] wordList = line.split(" ");
-            
-            if (wordList.length <= 1)
-                continue;
-            if (wordList[0].equals("a")) {
-                if (wordList.length == 2)
-                    this.addUser(wordList[1]);
-                if (wordList.length == 3)
-                    this.addFriends(wordList[1],wordList[2]);
-                
-            } else if (wordList[0].equals("r")) {
-                if (wordList.length == 2)
-                    this.removeUser(wordList[1]);
-                if (wordList.length == 3)
-                    this.removeFriends(wordList[1],wordList[2]);
-            } else if (wordList[0].equals("s")) {
-                setCentralUser(wordList[1]);
-            }
+      scnr = new Scanner(file);
+      while (scnr.hasNextLine()) {
+        String line = scnr.nextLine();
+        String[] wordList = line.split(" ");
+
+        if (wordList.length <= 1)
+          continue;
+        if (wordList[0].equals("a")) {
+          if (wordList.length == 2)
+            this.addUser(wordList[1]);
+          if (wordList.length == 3)
+            this.addFriends(wordList[1], wordList[2]);
+
+        } else if (wordList[0].equals("r")) {
+          if (wordList.length == 2)
+            this.removeUser(wordList[1]);
+          if (wordList.length == 3)
+            this.removeFriends(wordList[1], wordList[2]);
+        } else if (wordList[0].equals("s")) {
+          setCentralUser(wordList[1]);
         }
+      }
     } catch (FileNotFoundException e) {
-        e.printStackTrace();
+      e.printStackTrace();
     } finally {
-        if (scnr != null)
-            scnr.close();
+      if (scnr != null)
+        scnr.close();
     }
   }
 
-  
+
   private void setCentralUser(String name) {
     Set<Person> allUsers = graph.getAllNodes();
     Iterator<Person> itr = allUsers.iterator();
@@ -189,24 +193,24 @@ public class SocialNetwork implements SocialNetworkADT {
       String next = itr.next().name();
       addFriends(name, next);
     }
-    
+
   }
 
   @Override
   public void saveToFile(File file) {
     try {
-      
+
       PrintWriter writer = new PrintWriter(file);
       Set<Person> allNodes = graph.getAllNodes();
       Iterator<Person> itr = allNodes.iterator();
       while (itr.hasNext()) {
         if (itr.next().name() != null) {
-        String next = itr.next().name();
-        writer.write("a " + next + "\n");
-        writer.flush();
+          String next = itr.next().name();
+          writer.write("a " + next + "\n");
+          writer.flush();
         }
       }
-      
+
       if (writer != null) {
         writer.close();
       }
@@ -214,6 +218,34 @@ public class SocialNetwork implements SocialNetworkADT {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
+
+  }
+  
+  public static void main(String[] args) {
+//    SocialNetwork network = new SocialNetwork();
+//    network.addUser("p1");
+//    network.addUser("p2");
+//    network.addUser("p3");
+//    network.addUser("p4");
+//    network.addUser("p5");
+//    network.addUser("p6");
+//    network.addFriends("p1", "p2");
+//    network.addFriends("p2", "p3");
+//    network.addFriends("p4", "p5");
+//    Set<Graph> cc = network.getConnectedComponents();
+//    System.out.println(cc.size());
+//    for (Graph graph: cc) {
+//      for (Person person: graph.getAllNodes()) {
+//        System.out.print(person.name() + " ");
+//        
+//      }
+//      System.out.println("");
+//     // System.out.print
+//    }
+    
+   // System.out.println(cc);
+    
     
   }
+  
 }
