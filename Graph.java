@@ -90,7 +90,7 @@ public class Graph implements GraphADT {
 	 */
 	public boolean addEdge(Person p1, Person p2) {
 		try {
-			if (p1 == null || p2 == null || (!has(p1) && !has(p2)))
+			if (p1 == null || p2 == null)
 				throw new Exception();
 
 			if (!has(p1))
