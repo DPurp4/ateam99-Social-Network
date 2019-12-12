@@ -102,14 +102,14 @@ public class Graph implements GraphADT {
 				if (v2.name().equals(p2.name()))
 					for (Person v1 : verts)
 						if (v1.name().equals(p1.name())) {
-							for (Person v : v2.pred())
+							for (Person v : v2.neighbors())
 								if (v.equals(v1))// edge found
 									edgeExist = true;
 							if (edgeExist)
 								break;
 
-							v2.pred().add(v1);// update predecessor and successor
-							v1.succ().add(v2);
+							v2.neighbors().add(v1);// update predecessor and successor
+							v1.neighbors().add(v2);
 							numEdge++;
 							break;
 						}
@@ -136,8 +136,8 @@ public class Graph implements GraphADT {
 				if (v2.name().equals(p2.name()))
 					for (Person v1 : verts)
 						if (v1.name().equals(p1.name())) {// edge found
-							v2.pred().remove(v1);// update predecessor and successor
-							v1.succ().remove(v2);
+							v2.neighbors().remove(v1);// update predecessor and successor
+							v1.neighbors().remove(v2);
 							numEdge--;
 							edgeExist = true;
 							break;
@@ -163,17 +163,7 @@ public class Graph implements GraphADT {
 	 *
 	 */
 	public Set<Person> getNeighbors(Person p) {
-		Set<Person> neighbors = new HashSet<Person>();
-		for (Person v : verts)
-			if (v.name().equals(p.name())) {// get predecessors
-				for (Person adjV : v.succ())
-					neighbors.add(adjV);
-				for (Person adjV : v.pred())
-					if (!neighbors.contains(adjV))
-						neighbors.add(adjV);
-				break;
-			}
-		return neighbors;
+		return getNode(p.name()).neighbors();
 	}
 
 	public Person getNode(String name) {
@@ -208,4 +198,5 @@ public class Graph implements GraphADT {
 		}
 		return false;
 	}
+}
 }
