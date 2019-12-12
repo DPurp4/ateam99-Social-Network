@@ -28,7 +28,6 @@ import java.util.Set;
 /**
  * Filename:   GraphADT.java
  * Project:    ateam
- * Authors:    
  * 
  * A simple graph interface
  */
