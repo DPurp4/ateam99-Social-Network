@@ -31,7 +31,7 @@ public class SocialNetwork implements SocialNetworkADT {
   private Graph graph;
   private String centralUser;
   
-  private String getCentralUser() {
+  public String getCentralUser() {
     return centralUser;
   }
   
@@ -205,7 +205,7 @@ public class SocialNetwork implements SocialNetworkADT {
   }
 
 
-  private void setCentralUser(String name) {
+  public void setCentralUser(String name) {
     this.centralUser = name;
 
   }
