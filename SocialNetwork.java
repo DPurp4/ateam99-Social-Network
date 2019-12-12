@@ -125,28 +125,42 @@ public class SocialNetwork implements SocialNetworkADT {
   }
 
 
+  void DFSUtil(Person p, Graph temp) { 
+    p.setVisited(true); 
+    temp.addNode(p);
+    for (Person neighbor : graph.getNeighbors(p)) { 
+        if(!neighbor.getVisited())
+          DFSUtil(neighbor, temp); 
+    } 
+
+} 
+    void connectedComponents(Graph temp, Set<Graph> cc) { 
+      
+     for (Person visited: graph.getAllNodes()) {
+       visited.setVisited(false);
+     }
+      
+    // Mark all the vertices as not visited 
+    for(Person person: graph.getAllNodes()) { 
+        if(!person.getVisited()) { 
+            // print all reachable vertices 
+            // from v 
+            DFSUtil(person, temp); 
+            cc.add(temp);
+            temp = new Graph();
+        } 
+    } 
+} 
+  
+  
+  
 
   @Override
   public Set<Graph> getConnectedComponents() {
 
     Graph temp = new Graph();
     Set<Graph> cc = new HashSet<Graph>();
-    Set<Person> allPeople = this.getAllPeople();
-    for (Person person : allPeople) {
-      person.setVisited(false);
-    }
-    for (Person person : allPeople) {
-      if (!person.getVisited()) {
-        person.setVisited(true);
-        temp.addNode(person);
-        Set<Person> oneComponent = getFriends(person.name());
-        for (Person person1 : oneComponent) {
-          person1.setVisited(true);
-          temp.addNode(person1);
-        }
-      }
-      cc.add(temp);
-    }
+    connectedComponents(temp, cc);
 
     return cc;
   }
@@ -222,26 +236,28 @@ public class SocialNetwork implements SocialNetworkADT {
   }
   
   public static void main(String[] args) {
-//    SocialNetwork network = new SocialNetwork();
-//    network.addUser("p1");
-//    network.addUser("p2");
-//    network.addUser("p3");
-//    network.addUser("p4");
-//    network.addUser("p5");
-//    network.addUser("p6");
-//    network.addFriends("p1", "p2");
-//    network.addFriends("p2", "p3");
-//    network.addFriends("p4", "p5");
-//    Set<Graph> cc = network.getConnectedComponents();
-//    System.out.println(cc.size());
-//    for (Graph graph: cc) {
-//      for (Person person: graph.getAllNodes()) {
-//        System.out.print(person.name() + " ");
-//        
-//      }
-//      System.out.println("");
+    SocialNetwork network = new SocialNetwork();
+    network.addUser("p1");
+    network.addUser("p2");
+    network.addUser("p3");
+    network.addUser("p4");
+    network.addUser("p5");
+    network.addUser("p6");
+    network.addFriends("p1", "p2");
+    network.addFriends("p2", "p3");
+    network.addFriends("p4", "p5");
+    network.addFriends("p2", "p7");
+    network.addFriends("p7", "p3");
+    Set<Graph> cc = network.getConnectedComponents();
+    System.out.println(cc.size());
+    for (Graph graph: cc) {
+      for (Person person: graph.getAllNodes()) {
+        System.out.print(person.name() + " ");
+        
+      }
+      System.out.println("");
 //     // System.out.print
-//    }
+    }
     
    // System.out.println(cc);
     
