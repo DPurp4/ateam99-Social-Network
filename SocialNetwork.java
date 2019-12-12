@@ -159,9 +159,9 @@ public class SocialNetwork implements SocialNetworkADT {
     LinkedList<Person> bfsList = new LinkedList<Person>();
     Queue<Person> queue = new LinkedList<>();
     Map<String, Person> prev = new HashMap<>();
-    Person p1 = graph.getNode(name1); // start vertex
-    Person p2 = graph.getNode(name2); // end vertex
-    Person current = p1; // current vertex
+    Person p1 = graph.getNode(name1); 
+    Person p2 = graph.getNode(name2); 
+    Person current = p1; // current person
 
     queue.add(current);
     current.setVisited(true);
@@ -175,15 +175,15 @@ public class SocialNetwork implements SocialNetworkADT {
       } else {
         Set<Person> currentFriends = graph.getNeighbors(current);
         for (Person currentFriend : currentFriends) {
-          if (!currentFriend.getVisited()) {
+          if (!currentFriend.getVisited()) { //check if friend is visited
             queue.add(currentFriend);
-            currentFriend.setVisited(true);
+            currentFriend.setVisited(true); // mark current friend visited after adding to queue
             prev.put(currentFriend.name(), current);
           }
         }
       }
     }
-    if (!current.name().equals(name2)) {
+    if (!current.name().equals(name2)) { // no match is found - null is returned
       return null;
     }
     for (Person node = p2; node != null; node = prev.get(node.name())) {
@@ -252,23 +252,23 @@ public class SocialNetwork implements SocialNetworkADT {
 
         if (wordList.length <= 1)
           continue;
-        if (wordList[0].equals("a")) {
+        if (wordList[0].equals("a")) { // for adding users and friendships
           if (!hasDefault) {
             hasDefault = true;
             centralUser = wordList[1];
           }
-          if (wordList.length == 2)
+          if (wordList.length == 2) // adding user
             this.addUser(wordList[1]);
-          if (wordList.length == 3)
+          if (wordList.length == 3) // adding friends
             this.addFriends(wordList[1], wordList[2]);
 
         } else if (wordList[0].equals("r")) {
-          if (wordList.length == 2)
+          if (wordList.length == 2) // removing user
             this.removeUser(wordList[1]);
-          if (wordList.length == 3)
+          if (wordList.length == 3) // removing friends
             this.removeFriends(wordList[1], wordList[2]);
         } else if (wordList[0].equals("s")) {
-          setCentralUser(wordList[1]);
+          setCentralUser(wordList[1]); // sets central user
         } 
       }
     } catch (FileNotFoundException e) {
@@ -296,14 +296,14 @@ public class SocialNetwork implements SocialNetworkADT {
   @Override
   public void saveToFile(File file) {
       try {
-        PrintWriter writer = new PrintWriter(file);
+        PrintWriter writer = new PrintWriter(file); // file to be written to
         for (Person p : graph.getAllNodes())
-          p.setVisited(false);
+          p.setVisited(false); // initially mark all nodes unvisited
         for (Person p : graph.getAllNodes()) {
           writer.write("a " + p.name() + "\n");
           for (Person n : graph.getNeighbors(p))
-            if (!n.getVisited())
-              writer.write("a " + p.name() + " " + n.name() + "\n");
+            if (!n.getVisited()) // if node IS visited
+              writer.write("a " + p.name() + " " + n.name() + "\n"); // write to file
           p.setVisited(true);
         }
         writer.flush();
