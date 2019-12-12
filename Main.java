@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -47,10 +48,12 @@ public class Main extends Application {
     private Button clearNetworkButton = new Button("Clear Network");
     private Button loadNetworkButton = new Button("Load Network");
     private Button exportNetworkButton = new Button("Export Network");
+    private Button componentsInNetworkButton = new Button("Show Network Components");
     private Button addFriendButton = new Button("Add Friend");
     private Button removeFriendButton = new Button("Remove Friend");
     private Button findMutualFriendButton = new Button("Find Mutual Friend");
     private Button findShortestPathFriendButton = new Button("Shortest Path");
+
 
     private Button[] mainButtons = {
             addPersonButton,
@@ -61,7 +64,8 @@ public class Main extends Application {
             addFriendButton,
             removeFriendButton,
             findMutualFriendButton,
-            findShortestPathFriendButton
+            findShortestPathFriendButton,
+            componentsInNetworkButton
     };
 
     private boolean isNetworkLoaded = false;
@@ -275,26 +279,47 @@ public class Main extends Application {
             String selectedPersonName = leftListView.getSelectionModel().getSelectedItem();
             socialNetwork.setCentralUser(selectedPersonName);
             nameLabel.setText(selectedPersonName);
-
-            LinkedList<String> friendList = new LinkedList<>();
-            if (socialNetwork.getFriends(selectedPersonName) == null) {
-                statusTextArea.setText("This user has no friend, how pathetic!");
-                friendListTextArea.setText(":(");
-            } else {
-
-                for (Person person : socialNetwork.getFriends(selectedPersonName))
-                    friendList.add(person.name());
-
-                String friend_s = "";
-                if (friendList.size() == 1)
-                    friend_s = " friend.";
-                else
-                    friend_s = " friends.";
-
-                statusTextArea.setText("This user has " + friendList.size() + friend_s);
-                friendListTextArea.setText(friendList.toString().replace("[", "").replace("]", ""));
-            }
+            updateCentralUserInfo(selectedPersonName);
         });
+    }
+
+    private void updateCentralUserInfo(String selectedPersonName) {
+        LinkedList<String> friendList = new LinkedList<>();
+        if (socialNetwork.getFriends(selectedPersonName) == null) {
+            statusTextArea.setText("This user has no friend, how pathetic!");
+            friendListTextArea.setText(":(");
+        } else {
+
+            for (Person person : socialNetwork.getFriends(selectedPersonName))
+                friendList.add(person.name());
+
+            String friend_s = "";
+            if (friendList.size() == 1)
+                friend_s = " friend.";
+            else
+                friend_s = " friends.";
+
+            int peopleSize = socialNetwork.getAllPeople().size();
+            String peopleSizeInfo;
+            if (peopleSize == 1)
+                peopleSizeInfo = "There is 1 person in the network\n";
+            else
+                peopleSizeInfo = "There are " + peopleSize + " people in the network\n";
+
+            int componentSize = socialNetwork.getConnectedComponents().size();
+            String componentInfo;
+            if (componentSize == 1)
+                componentInfo = "There is 1 component in the network\n";
+            else
+                componentInfo = "There are " + componentSize + " components in the network\n";
+
+
+
+            networkInfoTextArea.setText(peopleSizeInfo + componentInfo);
+
+            statusTextArea.setText("This user has " + friendList.size() + friend_s);
+            friendListTextArea.setText(friendList.toString().replace("[", "").replace("]", ""));
+        }
     }
 
     private void setupMainButtons(BorderPane mainPane, Stage primaryStage) {
@@ -308,6 +333,35 @@ public class Main extends Application {
         handleRemoveFriends();
         handleFindMutualFriends();
         handleFindShortestPathFriend();
+        componentsInNetworkButton.setOnAction(e -> {
+
+            Set<Graph> components = socialNetwork.getConnectedComponents();
+
+
+            int heightFactor = components.size();
+            LinkedList<Node> nodes = new LinkedList<>();
+            for (Graph component : components) {
+                heightFactor++;
+                LinkedList<String> componentItem = new LinkedList<>();
+                for (Person person : component.getAllNodes()) {
+                    componentItem.add(person.name());
+                }
+                nodes.add(new Label(componentItem.toString().replace("]", "").replace("[", "")));
+            }
+
+            Stage showComponentsStage = new Stage();
+            showComponentsStage.setTitle("Showing Components");
+            showComponentsStage.initModality(Modality.APPLICATION_MODAL);
+            showComponentsStage.setMinWidth(512);
+            showComponentsStage.setMinHeight(heightFactor * 30);
+
+            VBox layout = new VBox(16);
+            layout.getChildren().addAll(nodes);
+            layout.setAlignment(Pos.CENTER);
+            Scene scene = new Scene(layout);
+            showComponentsStage.setScene(scene);
+            showComponentsStage.showAndWait();
+        });
     }
 
     private void handleFindShortestPathFriend() {
@@ -320,7 +374,7 @@ public class Main extends Application {
             Stage shortestPathStage = new Stage();
             shortestPathStage.setTitle("Find the shortest connect between the given person");
             shortestPathStage.initModality(Modality.APPLICATION_MODAL);
-            shortestPathStage.setMinWidth(256);
+            shortestPathStage.setMinWidth(512);
             shortestPathStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -379,7 +433,7 @@ public class Main extends Application {
             Stage findMutualFriendStage = new Stage();
             findMutualFriendStage.setTitle("Find mutual friend with " + selectedPersonName);
             findMutualFriendStage.initModality(Modality.APPLICATION_MODAL);
-            findMutualFriendStage.setMinWidth(256);
+            findMutualFriendStage.setMinWidth(512);
             findMutualFriendStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -439,7 +493,7 @@ public class Main extends Application {
             Stage removeFriendStage = new Stage();
             removeFriendStage.setTitle("Remove Friend of " + selectedPersonName);
             removeFriendStage.initModality(Modality.APPLICATION_MODAL);
-            removeFriendStage.setMinWidth(256);
+            removeFriendStage.setMinWidth(512);
             removeFriendStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -490,7 +544,7 @@ public class Main extends Application {
             Stage addFriendStage = new Stage();
             addFriendStage.setTitle("Add Friend to " + selectedPersonName);
             addFriendStage.initModality(Modality.APPLICATION_MODAL);
-            addFriendStage.setMinWidth(256);
+            addFriendStage.setMinWidth(512);
             addFriendStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -526,7 +580,7 @@ public class Main extends Application {
             Stage removePersonStage = new Stage();
             removePersonStage.setTitle("Remove Person");
             removePersonStage.initModality(Modality.APPLICATION_MODAL);
-            removePersonStage.setMinWidth(256);
+            removePersonStage.setMinWidth(512);
             removePersonStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -558,7 +612,7 @@ public class Main extends Application {
             Stage addPersonStage = new Stage();
             addPersonStage.setTitle("Add Person");
             addPersonStage.initModality(Modality.APPLICATION_MODAL);
-            addPersonStage.setMinWidth(256);
+            addPersonStage.setMinWidth(512);
             addPersonStage.setMinHeight(128);
 
             TextField personNameTextField = new TextField();
@@ -614,6 +668,9 @@ public class Main extends Application {
                 peopleList.clear();
                 for (Button button : mainButtons)
                     button.setDisable(!button.getText().equals("Load Network"));
+                statusTextArea.setText(N_A);
+                networkInfoTextArea.setText(N_A);
+                friendListTextArea.setText(N_A);
             }
             else
                 alert.close();
@@ -647,10 +704,13 @@ public class Main extends Application {
     }
 
     private void reloadPeopleList() {
-        peopleList.clear();
-        for (Person person : socialNetwork.getAllPeople())
-            peopleList.add(person.name());
+        peopleList.add();
+        for (Person person : socialNetwork.getAllPeople()) {
+            if (!peopleList.contains(person.name()))
+                peopleList.add(person.name());
+        }
         leftListView.getSelectionModel().select(socialNetwork.getCentralUser());
+        updateCentralUserInfo(socialNetwork.getCentralUser());
     }
 
     private void setupMainButtonsUI(BorderPane mainPane) {
@@ -685,15 +745,15 @@ public class Main extends Application {
 
         friendListTextArea.setEditable(false);
         friendListTextArea.setWrapText(true);
-        friendListTextArea.setMaxWidth(180);
+        friendListTextArea.setMaxWidth(270);
 
         statusTextArea.setEditable(false);
         statusTextArea.setWrapText(true);
-        statusTextArea.setMaxWidth(180);
+        statusTextArea.setMaxWidth(270);
 
         networkInfoTextArea.setEditable(false);
         networkInfoTextArea.setWrapText(true);
-        networkInfoTextArea.setMaxWidth(180);
+        networkInfoTextArea.setMaxWidth(270);
 
         rightBox.setSpacing(8);
         final String placeholder = "                  ";
@@ -707,8 +767,8 @@ public class Main extends Application {
         socialNetworkTitleLabel.setFont(Font.font("Verdana", 16));
         Label mutualFriendTitleLabel = new Label("Mutual Friends: " + placeholder);
         mutualFriendTitleLabel.setFont(Font.font("Verdana", 16));
-        Label allConnectionTitleLabel = new Label("All Connections: " + placeholder);
-        allConnectionTitleLabel.setFont(Font.font("Verdana", 16));
+        Label networkInfoLabel = new Label("Network Information: " + placeholder);
+        networkInfoLabel.setFont(Font.font("Verdana", 16));
 
         rightBox.getChildren().addAll(
                 statusTitleLabel,
@@ -717,7 +777,7 @@ public class Main extends Application {
                 nameLabel,
                 friendListTitleLabel,
                 friendListTextArea,
-                allConnectionTitleLabel,
+                networkInfoLabel,
                 networkInfoTextArea
         );
 
